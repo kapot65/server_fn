@@ -1,0 +1,18 @@
+nnkProcDef.newTree(
+  newIdentNode("read"),
+  newEmptyNode(),
+  newEmptyNode(),
+  nnkFormalParams.newTree(
+    newIdentNode("string"),
+    nnkIdentDefs.newTree(
+      newIdentNode("filename"),
+      newIdentNode("string"),
+      newEmptyNode()
+    )
+  ),
+  newEmptyNode(),
+  newEmptyNode(),
+  nnkStmtList.newTree(
+    newLit("AAAA")
+  )
+)
