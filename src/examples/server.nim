@@ -5,7 +5,7 @@ import std/strformat
 import httpbeast
 import unibs
 
-import iso_server
+import ../iso_server
 
 isomorphic:
   proc read(a: string, b: string, time: int): string = 
