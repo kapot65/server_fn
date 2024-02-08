@@ -3,5 +3,7 @@
 
 import server_fnpkg/submodule
 
+import iso_client
+
 when isMainModule:
   echo(getWelcomeMessage())

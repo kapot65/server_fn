@@ -6,7 +6,7 @@ description   = "A new awesome nimble package"
 license       = "MIT"
 srcDir        = "src"
 installExt    = @["nim"]
-bin           = @["server_fn"]
+bin           = @["server_fn", "post_js"]
 
 
 # Dependencies

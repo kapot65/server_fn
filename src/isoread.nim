@@ -2,8 +2,13 @@ import std/macros
 import std/strformat
 import std/strutils
 
+import unibs
+
+func makeReqName(name: string): string = 
+    fmt"{name.capitalizeAscii}Req"
+
 func createReqType(name: string, params: seq[(NimNode, NimNode)]): NimNode =
-    let typeName = fmt"{name.capitalizeAscii}Req"
+    let typeName = name.makeReqName
 
     var records = nnkRecList.newTree()
     for arg in params:
@@ -12,8 +17,6 @@ func createReqType(name: string, params: seq[(NimNode, NimNode)]): NimNode =
         records.add(nnkIdentDefs.newTree(
             name, argType, newEmptyNode()
         ))
-
-    
 
     nnkStmtList.newTree(
         nnkTypeSection.newTree(
@@ -29,7 +32,20 @@ func createReqType(name: string, params: seq[(NimNode, NimNode)]): NimNode =
         )
     )
 
-    
+func fillReq(name: string, params: seq[(NimNode, NimNode)]): NimNode = 
+    let typeName = name.makeReqName
+
+    var objConstr = nnkObjConstr.newTree(newIdentNode(typeName))
+    for arg in params:
+        let name = arg[0]
+        let argType = arg[1]
+        objConstr.add(nnkExprColonExpr.newTree(
+            name, name
+        ))
+
+    nnkStmtList.newTree(
+        objConstr
+    )
 
 macro isomorphic(args: untyped): untyped =
     # extract proc definition from block
@@ -67,50 +83,55 @@ macro isomorphic(args: untyped): untyped =
     arguments: {funcParams}
     return: {funcReturn.astGenRepr}
     """
-    
-    # var resFunc  = nnkCall.newTree(
-    #         newIdentNode(fmt"{funcName}_inner"),
-    #     )
 
-    # for arg in funcParams:
-    #     resFunc.add(newLit(arg[0].strVal))
+    let reqType = createReqType(funcName, funcParams)
+    let fillCmd = fillReq(funcName, funcParams)
 
-
-    # nnkStmtList.newTree(resFunc)
-
-    # echolastProc.astGenRepr
-
-    # dumpTree:
-    #     proc read(filename: string): string = 
-    #         readFile("src/isoread.nim")
-
-    # let firstProc = sequence.pop
-    # quote do:
-    #     `firstProc`
-
-    createReqType(funcName, funcParams)
+    # make request from initial proc
+    var request = firstProc.copyNimTree
+    # just delete function body
+    request.del(request.len - 1, 1)
+    # and add custom instead
+    request.add quote do:
+        let req = `fillCmd`
+        let serialized = req.serialize
+        return serialized
+    quote do:
+        `reqType` # define request type
+        `request`
 
 proc read_inner(a: string, b: string) = 
     echo fmt"{a}: {b}"
 
 
-dumpAstGen:
-    type Foo = object
-        i: int
-
 isomorphic:
-    proc read(a: string, b: string, time: int) = 
+    # proc status(): string =
+    #     return "OK"
+
+    proc read(a: string, b: string, time: int): string = 
         # readFile("src/isoread.nim")
-        echo "AAAA"
+        return "from backend"
 
-
-let req = ReadReq(a: "aaa", b: "bbb", time: 123)
-debugEcho req
-
-import unibs
-
-let serialized = req.serialize
-echo serialized
+let serialized = read("aaa", "bbb", 123)
 
 let deserialized = serialized.deserialize ReadReq
 echo deserialized
+
+dumpAstGen:
+    case req.path.get()
+    of "/":
+        req.send("Hello World")
+    of "/api/read":
+        req.send(Http200, "{\"a\": 123, \"b\": 345}", "Content-Type: application/json")
+    else:
+      req.send(Http404)
+
+# dumpAstGen:
+#     ReadReq(a: "aaa", b: "bbb", time: 123)
+
+# let req = ReadReq(a: "aaa", b: "bbb", time: 123)
+# debugEcho req
+
+# let serialized = req.serialize
+# echo serialized
+

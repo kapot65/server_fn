@@ -1,15 +1,24 @@
 import options, asyncdispatch
+import std/strformat
 
+# these imports must be applied to make macro work
 import httpbeast
+import unibs
 
-proc onRequest(req: Request): Future[void] =
-  if req.httpMethod == some(HttpGet):
-    case req.path.get()
-    of "/":
-        req.send("Hello World")
-    of "/api/execfunc":
-        req.send(Http200, "{\"a\": 123, \"b\": 345}", "Content-Type: application/json")
-    else:
-      req.send(Http404)
+import iso_server
 
-run(onRequest, initSettings(port=Port(8880), bindAddr="0.0.0.0"))
+isomorphic:
+  proc read(a: string, b: string, time: int): string = 
+    # readFile("src/isoread.nim")
+    return fmt"from backend -> {a}; {b}; {time}"
+
+# type
+#   ReadReq = object
+#     a: string
+#     b: string
+#     time: int
+
+# proc read(a: string, b: string, time: int): string = 
+#   return
+
+run(onApi, initSettings(port=Port(8880), bindAddr="0.0.0.0"))
