@@ -61,6 +61,8 @@ func createReqCall(reqIdent: NimNode, procDef: NimNode): NimNode =
     nnkStmtList.newTree(call)
 
 proc createServerApi(procDef: NimNode): NimNode =
+    
+    # TODO: add multiple functions implementation
     let funcName = procDef[0].strVal
 
     let reqType = createReqType(procDef)

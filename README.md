@@ -3,7 +3,6 @@ An attempt to achieve Leptos [server functions](https://book.leptos.dev/server/2
 
 
 
-
 ## usage
 1. A `httpbeast` and `unibs` must be installed and added as imports
    ```python
@@ -20,3 +19,4 @@ An attempt to achieve Leptos [server functions](https://book.leptos.dev/server/2
 
 ### TODO
 - [ ] add default values for arguments
+- [ ] switch from unibs to json-serialization
