@@ -1,9 +1,9 @@
 import std/macros
 
 when defined(js):
-    import server_fnpkg/client
+    import server_fn/client
 else:
-    import server_fnpkg/server
+    import server_fn/server
 
 macro make_server_fns*(args: untyped): untyped =
     # TODO: add docstring
