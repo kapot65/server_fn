@@ -4,6 +4,19 @@ import std/macros
 import std/strformat
 import std/strutils
 
+func extractProcName*(procDef: NimNode): string =
+    ## Extract proc name as string
+    ## Works on both public and private functions
+    ## ex: proc read*(a: string, b: string, time: int): string -> "read"
+    ## ex: proc read(a: string, b: string, time: int): string -> read
+    result = case procDef[0].kind:
+        of nnkIdent:
+            procDef[0].strVal
+        of nnkPostfix:
+            procDef[0][1].strVal
+        else:
+            raise newException(ValueError, "procDef first arg type unsupported")
+
 func makeReqName*(funcName: string): string = 
     ## Makes a request parameters type name from proc name
     ## capitalise first letter and adds `Req` to the end
@@ -26,10 +39,10 @@ func createReqType*(procDef: NimNode): NimNode =
     ##     b: string
     ##     time: int
     # TODO: make public
-    let funcName = procDef[0]
     let funcParams = procDef[3]
 
-    let typeName = funcName.strVal.makeReqName
+    let typeName = makeReqName procDef.extractProcName
+    debugEcho typeName
 
     var records = nnkRecList.newTree()
     for arg in funcParams[1..^1]:

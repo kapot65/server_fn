@@ -1,6 +1,5 @@
 import std/macros
 import std/strformat
-import std/strutils
 
 import base
 
@@ -8,11 +7,10 @@ func createReq*(procDef: NimNode): NimNode =
     ## Create request params object
     ## 
     ## ex: `ReadReq(a: a, b: b, time: time)` for `read` as function
-    let funcName = procDef[0].copyNimTree
     let funcParams = procDef[3].copyNimTree
 
     var call = nnkObjConstr.newTree(
-        newIdentNode(makeReqName(funcName.strVal)
+        newIdentNode(makeReqName(procDef.extractProcName)
     ))
     for param in funcParams[1..^1]:
         call.add(
@@ -53,7 +51,8 @@ proc createRemoteCall*(procDef: NimNode): NimNode =
     )
 
     # TODO: remove hostname
-    let api = fmt"http://127.0.0.1:8880{createApiPath(funcName.strVal)}"
+    let api = fmt"http://127.0.0.1:8880{createApiPath(procDef.extractProcName)}"
+    
     let recObj = createReq(procDef)
 
     # and add custom instead

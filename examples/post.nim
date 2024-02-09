@@ -1,6 +1,8 @@
+## Native client for tests
+
 import std/[asyncdispatch, httpclient]
 
-import ../iso_client
+import ../src/server_fn
 
 import unibs
 
@@ -8,7 +10,6 @@ isomorphic:
   proc read(a: string, b: string, time: int): string =
     # readFile("src/isoread.nim")
     return fmt"from backend -> {a}; {b}; {time}"
-
 
 
 let message = ReadReq(a: "A_field", b: "B_field", time: 1234).serialize
