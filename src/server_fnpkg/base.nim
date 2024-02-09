@@ -42,7 +42,6 @@ func createReqType*(procDef: NimNode): NimNode =
     let funcParams = procDef[3]
 
     let typeName = makeReqName procDef.extractProcName
-    debugEcho typeName
 
     var records = nnkRecList.newTree()
     for arg in funcParams[1..^1]:

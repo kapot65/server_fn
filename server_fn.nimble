@@ -2,15 +2,14 @@
 
 version       = "0.1.0"
 author        = "chernov"
-description   = "A new awesome nimble package"
+description   = "Server Functions implementation in Nim"
 license       = "MIT"
 srcDir        = "src"
 installExt    = @["nim"]
-bin           = @["server_fn", "post_js"]
-
 
 # Dependencies
 
 requires "nim >= 2.0.2"
 
-requires "mummy >= 0.4.0"
+requires "httpbeast >= 0.4.1"
+requires "unibs >= 0.2.0"
