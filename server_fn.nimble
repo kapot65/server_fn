@@ -8,8 +8,7 @@ srcDir        = "src"
 installExt    = @["nim"]
 
 # Dependencies
-
 requires "nim >= 2.0.2"
 
 requires "httpbeast >= 0.4.1"
-requires "unibs >= 0.2.0"
+requires "jsony >= 1.1.5"

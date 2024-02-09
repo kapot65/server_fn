@@ -40,12 +40,12 @@ func createProcBlocks(procDef: NimNode): (NimNode, NimNode) =
         nnkOfBranch.newTree(
             newLit(createApiPath(funcName)),
             quote do:
-                let `reqIdent` = req.body.get().deserialize `reqTypeName`
+                let `reqIdent` = req.body.get().fromJson(`reqTypeName`) 
                 let resp = `call`
                 req.send(
                     Http200, 
-                    resp.serialize, 
-                    "Content-Type: application/octet-stream"
+                    resp.toJson(), 
+                    "Content-Type: application/json"
                 )
                 result = true
         )
@@ -97,7 +97,7 @@ proc createServerApi*(procDefs: NimNode): NimNode =
     quote do:
         # add required imports
         import httpbeast
-        import unibs
+        import jsony
         import options, asyncdispatch
 
         `reqTypes` # define request type

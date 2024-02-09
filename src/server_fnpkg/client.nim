@@ -58,14 +58,14 @@ proc createRemoteCall(procDef: NimNode): NimNode =
     request.add quote do:
         let reqMsg = block:
             let msg = `recObj`
-            msg.serialize
+            msg.toJson()
 
         let resp = await cFetch(
             `api`.cstring,
             reqMsg.cstring
         )
         let binary = $(await resp.text())
-        let outMsg = binary.deserialize `funcRetType`
+        let outMsg = binary.fromJson(`funcRetType`)
         result = outMsg
 
     request
@@ -83,7 +83,7 @@ proc createApi*(procDefs: NimNode): NimNode =
             # required imports
             import std/asyncjs
             from std/jsffi import JsObject
-            import unibs
+            import jsony
 
             # add required required procs
             proc text(self: JsObject): Future[cstring] {.importjs: "#.$1()".}
