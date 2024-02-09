@@ -15,8 +15,7 @@ To run it follow next steps:
 3. open http://localhost:8880/ and check console
 
 ## caveats
-- unibs doesnt works with simple types (int, float etc)
-- no error handling for now
+- no error handling
 
 <!-- ### TODO
 - [ ] switch from unibs to json-serialization
